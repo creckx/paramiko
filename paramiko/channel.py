@@ -1256,6 +1256,16 @@ class ChannelFile (BufferedFile):
         self.channel.sendall(data)
         return len(data)
 
+    def close(self):
+        """
+        Close this channel file. The corresponging channel direction is shut down as well.
+        """
+        BufferedFile.close(self)
+        if self._flags & self.FLAG_WRITE:
+            self.channel.shutdown_write()
+        if self._flags & self.FLAG_READ:
+            self.channel.shutdown_read()
+
 
 class ChannelStderrFile (ChannelFile):
     def __init__(self, channel, mode = 'r', bufsize = -1):
